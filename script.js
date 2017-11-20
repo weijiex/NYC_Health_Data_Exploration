@@ -24,7 +24,7 @@ var svg = d3.select("body").append("svg")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.csv("sample_data.csv", function(error, data) {
+d3.csv("small_data.csv", function(error, data) {
   if (error) throw error;
 
   // format the data
@@ -39,17 +39,76 @@ d3.csv("sample_data.csv", function(error, data) {
 
   // Nest the entries by symbol
   var dataNest = d3.nest()
+      .key(function(d) {return d.topic;})
       .key(function(d) {return d.geo;})
       .entries(data);
 
-  // Loop through each symbol / key
-  dataNest.forEach(function(d) { 
+  console.log(data)
+
+  // Create a dropdown
+  var topicMenu = d3.select("#topicDropdown")
+
+  topicMenu
+  .append("select")
+  .selectAll("option")
+      .data(dataNest)
+      .enter()
+      .append("option")
+      .attr("value", function(d){
+          return d.key;
+      })
+      .text(function(d){
+          return d.key;
+      })
+
+
+  // Loop through each key
+  /*dataNest.forEach(function(d) { 
 
       svg.append("path")
           .attr("class", "line")
           .attr("d", valueline(d.values));
 
-    });
+    });*/
+
+// Function to create the initial graph
+  var initialGraph = function(topic){
+
+    // Filter the data to include only topic of interest
+    var selectTopic = dataNest.filter(function(d){
+                return d.key == topic;
+              })
+
+    var selectTopicGroups = svg.selectAll(".topicGroups")
+        .data(selectTopic, function(d){
+          return d ? d.key : this.key;
+        })
+        .enter()
+        .append("g")
+        .attr("class", "topicGroups")
+
+    var initialPath = selectTopicGroups.selectAll(".line")
+      .data(function(d) { return d.values; })
+      .enter()
+      .append("path")
+
+    initialPath
+      .attr("d", function(d){
+        return valueline(d.values)
+      })
+      .attr("class", "line")
+    }
+
+  // Create initial graph
+  initialGraph("Cigarette Smoking among Adults")
+
+  /*svg.selectAll(".line")
+      .data(dataNest)
+      .enter()
+      .append("path")
+        .attr("class", "line")
+        .attr("d", function(d){
+          return valueline(d.values)});*/
 
   // Add the X Axis
   svg.append("g")
