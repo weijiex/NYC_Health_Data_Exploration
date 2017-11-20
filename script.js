@@ -102,6 +102,42 @@ d3.csv("small_data.csv", function(error, data) {
   // Create initial graph
   initialGraph("Cigarette Smoking among Adults")
 
+  // Update the data
+  var updateGraph = function(topic){
+
+    // Filter the data to include only fruit of interest
+    var selectTopic = dataNest.filter(function(d){
+                return d.key == topic;
+              })
+
+    // Select all of the grouped elements and update the data
+      var selectTopicGroups = svg.selectAll(".topicGroups")
+        .data(selectTopic)
+
+        // Select all the lines and transition to new positions
+            selectTopicGroups.selectAll("path.line")
+               .data(function(d){
+                  return (d.values);
+                })
+                .transition()
+                  .duration(1000)
+                  .attr("d", function(d){
+                    return valueline(d.values)
+                  })
+  }
+
+  // Run update function when dropdown selection changes
+  topicMenu.on('change', function(){
+
+    // Find which topic was selected from the dropdown
+    var selectedTopic = d3.select(this)
+            .select("select")
+            .property("value")
+
+        // Run update function with the selected fruit
+        updateGraph(selectedTopic)
+    });
+
   /*svg.selectAll(".line")
       .data(dataNest)
       .enter()
