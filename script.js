@@ -58,11 +58,10 @@ d3.json("data.json", function(error, data) {
             return {max:max, entity:entity};
             })
 	  .entries(data)
+	  console.log(nest)
 
-  	// Scale the range of the data
-	
+  	// Scale the range of the data	
 	var years = data.map(function(d) {return d.year;});
-	console.log(years);
 	var yearScale = d3.scaleBand()
         .domain(years)
         .range([0, width]);
@@ -81,7 +80,38 @@ d3.json("data.json", function(error, data) {
 	          .tickSizeInner(0)
 	          .tickPadding(10));
 
+	// Create 1st dropdown
+    var topicMenu = d3.select("#topicDropdown")
 
+    topicMenu
+		.append("select")
+		.selectAll("option")
+        .data(nest)
+        .enter()
+        .append("option")
+        .attr("value", function(d){
+            return d.key;
+        })
+        .text(function(d){
+            return d.key;
+        })
+
+    // Create 2nd dropdown
+    var entityMenu = d3.select("#entityDropdown")
+
+    entityMenu
+    	.data(nest)
+		.append("select")
+		.selectAll("option")
+        .data(function(d) { return d.value.entity; })
+       	.enter()
+        .append("option")
+        .attr("value", function(d){
+            return d.key;
+        })
+        .text(function(d){
+            return d.key;
+        })
 	console.log(data);
 });
 
