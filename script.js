@@ -171,7 +171,7 @@ d3.json("data.json", function(error, data) {
 
  	// Create initial graph
  	initialGraph("Cigarette Smoking among Adults")
-
+/*
  	// Update the data
  	var updateGraph = function(topic){
 
@@ -245,7 +245,7 @@ d3.json("data.json", function(error, data) {
               .raise()
     })
 
-
+*/
 
 	console.log(data);
 });
