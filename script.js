@@ -24,7 +24,7 @@ var svg = d3.select("body").append("svg")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.csv("sample_1.csv", function(error, data) {
+d3.csv("sample_data.csv", function(error, data) {
   if (error) throw error;
 
   // format the data
@@ -37,11 +37,19 @@ d3.csv("sample_1.csv", function(error, data) {
   x.domain([2008, 2009, 2010, 2011, 2012, 2013]);
   y.domain([0, d3.max(data, function(d) { return d.number; })]);
 
-  // Add the valueline path.
-  svg.append("path")
-      .data([data])
-      .attr("class", "line")
-      .attr("d", valueline);
+  // Nest the entries by symbol
+  var dataNest = d3.nest()
+      .key(function(d) {return d.geo;})
+      .entries(data);
+
+  // Loop through each symbol / key
+  dataNest.forEach(function(d) { 
+
+      svg.append("path")
+          .attr("class", "line")
+          .attr("d", valueline(d.values));
+
+    });
 
   // Add the X Axis
   svg.append("g")
