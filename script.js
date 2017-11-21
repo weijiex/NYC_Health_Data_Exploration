@@ -35,13 +35,29 @@ d3.csv("small_data.csv", function(error, data) {
 
    // Scale the range of the data
   x.domain([2008, 2009, 2010, 2011, 2012, 2013]);
-  y.domain([0, d3.max(data, function(d) { return d.number; })]);
+  //y.domain([0, d3.max(data, function(d) { return d.number; })]);
 
   // Nest the entries by symbol
-  var dataNest = d3.nest()
+  /*var dataNest = d3.nest()
       .key(function(d) {return d.topic;})
       .key(function(d) {return d.geo;})
-      .entries(data);
+      .entries(data);*/
+
+  var dataNest = d3.nest()
+      .key(function(d){
+        return d.topic;
+      })
+    .rollup(function(leaves){
+            var max = d3.max(leaves, function(d){
+              return d.number
+            })
+            var geo = d3.nest().key(function(d){
+              return d.geo
+            })
+            .entries(leaves);
+            return {max:max, geo:geo};
+            })
+    .entries(data)
 
   console.log(data)
 
@@ -71,6 +87,7 @@ d3.csv("small_data.csv", function(error, data) {
 
     });*/
 
+
 // Function to create the initial graph
   var initialGraph = function(topic){
 
@@ -86,9 +103,12 @@ d3.csv("small_data.csv", function(error, data) {
         .enter()
         .append("g")
         .attr("class", "topicGroups")
+        .each(function(d){
+                y.domain([0, d.value.max])
+            });
 
     var initialPath = selectTopicGroups.selectAll(".line")
-      .data(function(d) { return d.values; })
+      .data(function(d) { return d.value.geo; })
       .enter()
       .append("path")
 
@@ -97,6 +117,12 @@ d3.csv("small_data.csv", function(error, data) {
         return valueline(d.values)
       })
       .attr("class", "line")
+
+    // Add the Y Axis
+    var yaxis = svg.append("g")
+           .attr("class", "y axis")
+           .call(d3.axisLeft(y));
+    
     }
 
   // Create initial graph
@@ -113,17 +139,27 @@ d3.csv("small_data.csv", function(error, data) {
     // Select all of the grouped elements and update the data
       var selectTopicGroups = svg.selectAll(".topicGroups")
         .data(selectTopic)
+        .each(function(d){
+                y.domain([0, d.value.max])
+            });
 
         // Select all the lines and transition to new positions
             selectTopicGroups.selectAll("path.line")
                .data(function(d){
-                  return (d.values);
+                  return (d.value.geo);
                 })
                 .transition()
                   .duration(1000)
                   .attr("d", function(d){
                     return valueline(d.values)
                   })
+
+        // Update the Y-axis       
+            d3.select(".y")
+              .transition()
+              .duration(1500)
+              .call(d3.axisLeft(y));      
+
   }
 
   // Run update function when dropdown selection changes
@@ -136,6 +172,8 @@ d3.csv("small_data.csv", function(error, data) {
 
         // Run update function with the selected fruit
         updateGraph(selectedTopic)
+
+
     });
 
   /*svg.selectAll(".line")
@@ -153,8 +191,5 @@ d3.csv("small_data.csv", function(error, data) {
 
       
 
-  // Add the Y Axis
-  svg.append("g")
-      .call(d3.axisLeft(y));
 
 });
