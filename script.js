@@ -3,7 +3,6 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-
 // set the ranges
 var x = d3.scalePoint().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
@@ -33,16 +32,10 @@ d3.csv("small_data.csv", function(error, data) {
       d.number = +d.number;
   });
 
-   // Scale the range of the data
+  // Scale the range of the data
   x.domain([2008, 2009, 2010, 2011, 2012, 2013]);
-  //y.domain([0, d3.max(data, function(d) { return d.number; })]);
 
   // Nest the entries by symbol
-  /*var dataNest = d3.nest()
-      .key(function(d) {return d.topic;})
-      .key(function(d) {return d.geo;})
-      .entries(data);*/
-
   var dataNest = d3.nest()
       .key(function(d){
         return d.topic;
@@ -61,7 +54,12 @@ d3.csv("small_data.csv", function(error, data) {
 
   console.log(data)
 
-  // Create a dropdown
+  // Add the X Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+
+  // Create 1st dropdown
   var topicMenu = d3.select("#topicDropdown")
 
   topicMenu
@@ -77,15 +75,22 @@ d3.csv("small_data.csv", function(error, data) {
           return d.key;
       })
 
+  // Create 2nd dropdown
+    var geoMenu = d3.select("#geoDropdown")
 
-  // Loop through each key
-  /*dataNest.forEach(function(d) { 
-
-      svg.append("path")
-          .attr("class", "line")
-          .attr("d", valueline(d.values));
-
-    });*/
+    geoMenu
+      .data(dataNest)
+    .append("select")
+    .selectAll("option")
+        .data(function(d) { return d.value.geo; })
+        .enter()
+        .append("option")
+        .attr("value", function(d){
+            return d.key;
+        })
+        .text(function(d){
+            return d.key;
+        })
 
 
 // Function to create the initial graph
@@ -122,16 +127,27 @@ d3.csv("small_data.csv", function(error, data) {
     var yaxis = svg.append("g")
            .attr("class", "y axis")
            .call(d3.axisLeft(y));
-    
+
+    // Add a label to the y axis
+    svg.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - 45) //adjust distance from y-axis
+          .attr("x", 0 - (height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .text("Percentage")
+          .attr("class", "y axis label");    
     }
+
 
   // Create initial graph
   initialGraph("Cigarette Smoking among Adults")
 
+
   // Update the data
   var updateGraph = function(topic){
 
-    // Filter the data to include only fruit of interest
+    // Filter the data to include only topic of interest
     var selectTopic = dataNest.filter(function(d){
                 return d.key == topic;
               })
@@ -159,7 +175,6 @@ d3.csv("small_data.csv", function(error, data) {
               .transition()
               .duration(1500)
               .call(d3.axisLeft(y));      
-
   }
 
   // Run update function when dropdown selection changes
@@ -173,23 +188,27 @@ d3.csv("small_data.csv", function(error, data) {
         // Run update function with the selected fruit
         updateGraph(selectedTopic)
 
-
     });
 
-  /*svg.selectAll(".line")
-      .data(dataNest)
-      .enter()
-      .append("path")
-        .attr("class", "line")
-        .attr("d", function(d){
-          return valueline(d.values)});*/
+ 
+  // Change color of selected line when geo dropdown changes
+  geoMenu.on('change', function(){
 
-  // Add the X Axis
-  svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
+    // Find which geo entity was selected
+    var selectedGeo = d3.select(this)
+      .select("select")
+      .property("value")
 
-      
-
-
+    // Change the class of the matching line to "selected"
+    var selLine = svg.selectAll(".line")
+            // de-select all the lines
+            .classed("selected", false)
+            .filter(function(d) {
+                return d.key === selectedGeo
+            })
+            // Set class to selected for matching line
+            .classed("selected", true)
+            .raise()
+  })
+    
 });

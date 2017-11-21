@@ -1,15 +1,12 @@
+
 body { font: 12px Arial;}
 
-path { 
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
+.line {
+  fill: none;
+  stroke: #999999;
+  stroke-width: 2px;
 }
 
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
+.selected{
+  stroke: #EF5285;
 }
