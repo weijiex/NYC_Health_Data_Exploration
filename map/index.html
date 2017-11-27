@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>NYC Health Data Exploration</title>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://d3js.org/topojson.v1.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+  
+  <body>
+    
+    <script>
+    var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+    
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+    
+    
+    
+    d3.json('UHF42.json', function(error, nyc) {
+
+
+    if (error) throw error;
+
+    var path = d3.geoPath()
+      .projection(d3.geoConicConformal()
+      .parallels([33, 45])
+      .rotate([96, -39])
+      .fitSize([width, height], nyc)); 
+
+    
+
+      var g = svg.append("g");
+
+      g.append('g')
+          .selectAll('path')
+          .data(nyc.features)
+          .enter()
+          .append('path')
+          .attr('d', path);
+
+    console.log(nyc)
+
+    })
+
+
+    </script>
+  </body>
+  
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
