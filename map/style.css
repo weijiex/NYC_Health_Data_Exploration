@@ -1,0 +1,12 @@
+
+body { font: 12px Arial;}
+
+.line {
+  fill: none;
+  stroke: #999999;
+  stroke-width: 2px;
+}
+
+.selected{
+  stroke: #EF5285;
+}
