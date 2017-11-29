@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>NYC Health Data Exploration</title>
         <script src="https://d3js.org/d3.v4.js"></script>
-        <script src="https://d3js.org/topojson.v1.min.js"></script>
+        <script src="d3-tip.js"></script>
         <link rel="stylesheet" href="style.css">
     </head>
   
@@ -14,6 +14,16 @@
     <div id= "yearDropdown"></div>
     
     <script>
+    var format = d3.format(",");
+
+    // Set tooltips
+    var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+              return "<strong>Neighborhood: </strong><span class='details'>" + d.properties.GEONAME + "<br></span>" + "<strong>Rate: </strong><span class='details'>" + format(d.properties.value) +"</span>";
+            })
+
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
@@ -92,6 +102,9 @@
         var minVal = d3.min(dataArray)
         var maxVal = d3.max(dataArray)
         var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
+
+        console.log(dataArray)
+
       d3.json('UHF42.json', function(error, json) {
           console.log(json)
           //Merge the csv data and GeoJSON
@@ -99,7 +112,7 @@
           //if (error) throw error;
           for (var i = 0; i < data.length; i++) {
         
-            //Grab state name
+            //Grab geo entity id from data csv
             var dataGeo = data[i].id;
             
             //Grab data value, and convert from string to float
@@ -127,6 +140,8 @@
             .rotate([96, -39])
             .fitSize([width, height], json)); 
          
+            svg.call(tip);
+
             var g = svg.append("g");
             g.append('g')
                 .selectAll('path')
@@ -139,13 +154,33 @@
                         var value = d.properties.value;
                         
                         if (value) {
-                          //If value exists…
+                          //If value exists
                           return ramp(d.properties.value);
                         } else {
-                          //If value is undefined…
+                          //If value is undefined
                           return "#ccc";
                         }
-             });
+             })
+              // tooltips
+              .style("stroke","white")
+              .style('stroke-width', 0.3)
+              .on('mouseover',function(d){
+                tip.show(d);
+
+                d3.select(this)
+                  .style("opacity", 1)
+                  .style("stroke","white")
+                  .style("stroke-width",3);
+              })
+              .on('mouseout', function(d){
+                tip.hide(d);
+
+                d3.select(this)
+                  .style("opacity", 0.8)
+                  .style("stroke","white")
+                  .style("stroke-width",0.3);
+        });
+
             // add a legend
             var w = 140, h = 300;
 
