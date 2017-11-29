@@ -9,6 +9,9 @@
     </head>
   
   <body>
+
+    <div id = "topicDropdown"></div>
+    <div id= "yearDropdown"></div>
     
     <script>
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -23,20 +26,77 @@
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-    
-    //Define quantize scale to sort data values into buckets of color
-    var color = d3.scaleQuantize()
-                .range(["rgb(237,248,233)","rgb(186,228,179)","rgb(116,196,118)","rgb(49,163,84)","rgb(0,109,44)"]);
-    
+              "translate(" + margin.left + "," + margin.top + ")");   
 
-    d3.csv("map_small_data.csv", function(data) {
+    d3.csv("map_data_sample.csv", function(data) {
 
         data.forEach(function(d) {
             d.id = +d.id;
+            d.number = +d.number;
+            d.year = d.year;
         });
 
-        console.log(data)
+        /*
+        var dataNest = d3.nest()
+            .key(function(d){
+              return d.topic;
+            })
+            .key(function(d){
+              return d.year;
+            })
+          .entries(data)*/
+
+        //console.log(dataNest[0].values[0].values[0].number)
+
+        var dataNest = d3.nest()
+              .key(function(d){
+                return d.topic;
+              })
+            .rollup(function(leaves){
+                    var year = d3.nest().key(function(d){
+                      return d.year
+                    })
+                    .entries(leaves);
+                    return {year: year};
+                    })
+            .entries(data)
+
+        console.log(dataNest[0].value.year)
+
+
+        // Create 1st dropdown
+        var topicMenu = d3.select("#topicDropdown")
+
+        topicMenu
+        .append("select")
+        .selectAll("option")
+            .data(dataNest)
+            .enter()
+            .append("option")
+            .attr("value", function(d){
+                return d.key;
+            })
+            .text(function(d){
+                return d.key;
+            })
+
+        // Create 2nd dropdown
+          var yearMenu = d3.select("#yearDropdown")
+
+          yearMenu
+            .data(dataNest)
+          .append("select")
+          .selectAll("option")
+              .data(function(d) { return d.value.year; })
+              .enter()
+              .append("option")
+              .attr("value", function(d){
+                  return d.key;
+              })
+              .text(function(d){
+                  return d.key;
+              })
+
 
         var dataArray = [];
         for (var d = 0; d < data.length; d++) {
