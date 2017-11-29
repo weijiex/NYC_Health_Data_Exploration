@@ -34,8 +34,9 @@
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");   
-    d3.csv("map_small_data.csv", function(data) {
+              "translate(" + margin.left + "," + margin.top + ")"); 
+
+    d3.csv("map_data_sample.csv", function(data) {
         data.forEach(function(d) {
             d.id = +d.id;
             d.number = +d.number;
