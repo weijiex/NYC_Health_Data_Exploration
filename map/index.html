@@ -17,25 +17,20 @@
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
-
     var lowColor = '#f9f9f9'
     var highColor = '#bc2a66'
-
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");   
-
-    d3.csv("map_data_sample.csv", function(data) {
-
+    d3.csv("map_small_data.csv", function(data) {
         data.forEach(function(d) {
             d.id = +d.id;
             d.number = +d.number;
             d.year = d.year;
         });
-
         /*
         var dataNest = d3.nest()
             .key(function(d){
@@ -45,9 +40,8 @@
               return d.year;
             })
           .entries(data)*/
-
         //console.log(dataNest[0].values[0].values[0].number)
-
+        
         var dataNest = d3.nest()
               .key(function(d){
                 return d.topic;
@@ -60,13 +54,9 @@
                     return {year: year};
                     })
             .entries(data)
-
         console.log(dataNest[0].value.year)
-
-
         // Create 1st dropdown
         var topicMenu = d3.select("#topicDropdown")
-
         topicMenu
         .append("select")
         .selectAll("option")
@@ -79,10 +69,8 @@
             .text(function(d){
                 return d.key;
             })
-
         // Create 2nd dropdown
           var yearMenu = d3.select("#yearDropdown")
-
           yearMenu
             .data(dataNest)
           .append("select")
@@ -97,7 +85,6 @@
                   return d.key;
               })
 
-
         var dataArray = [];
         for (var d = 0; d < data.length; d++) {
           dataArray.push(parseFloat(data[d].number))
@@ -105,12 +92,8 @@
         var minVal = d3.min(dataArray)
         var maxVal = d3.max(dataArray)
         var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
-
-
       d3.json('UHF42.json', function(error, json) {
-
           console.log(json)
-
           //Merge the csv data and GeoJSON
           //Loop through once for each csv data value
           //if (error) throw error;
@@ -121,7 +104,6 @@
             
             //Grab data value, and convert from string to float
             var dataValue = parseFloat(data[i].number);
-
             //Find the corresponding geo inside the GeoJSON
             for (var j = 0; j < json.features.length; j++) {
             
@@ -138,7 +120,6 @@
               }
             }   
           }
-
           //Bind data and create one path per GeoJSON feature
             var path = d3.geoPath()
             .projection(d3.geoConicConformal()
@@ -146,9 +127,7 @@
             .rotate([96, -39])
             .fitSize([width, height], json)); 
          
-
             var g = svg.append("g");
-
             g.append('g')
                 .selectAll('path')
                 .data(json.features)
@@ -167,17 +146,56 @@
                           return "#ccc";
                         }
              });
-      
+            // add a legend
+            var w = 140, h = 300;
+
+            var key = d3.select("body")
+              .append("svg")
+              .attr("width", w)
+              .attr("height", h)
+              .attr("class", "legend");
+
+            var legend = key.append("defs")
+              .append("svg:linearGradient")
+              .attr("id", "gradient")
+              .attr("x1", "100%")
+              .attr("y1", "0%")
+              .attr("x2", "100%")
+              .attr("y2", "100%")
+              .attr("spreadMethod", "pad");
+
+            legend.append("stop")
+              .attr("offset", "0%")
+              .attr("stop-color", highColor)
+              .attr("stop-opacity", 1);
+              
+            legend.append("stop")
+              .attr("offset", "100%")
+              .attr("stop-color", lowColor)
+              .attr("stop-opacity", 1);
+
+            key.append("rect")
+              .attr("width", w - 100)
+              .attr("height", h)
+              .style("fill", "url(#gradient)")
+              .attr("transform", "translate(0,10)");
+
+            var y = d3.scaleLinear()
+              .range([h, 0])
+              .domain([minVal, maxVal]);
+
+            var yAxis = d3.axisRight(y);
+
+            key.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "translate(41,10)")
+              .call(yAxis)
         });
-
     })
-
-
     </script>
   </body>
   
 </html>
-
 
 
 
