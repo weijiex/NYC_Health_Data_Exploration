@@ -14,7 +14,10 @@
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
-    
+
+    var lowColor = '#f9f9f9'
+    var highColor = '#bc2a66'
+
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -35,11 +38,14 @@
 
         console.log(data)
 
-        //Set input domain for color scale
-        color.domain([
-          d3.min(data, function(d) { return d.number; }), 
-          d3.max(data, function(d) { return d.number; })
-        ]);
+        var dataArray = [];
+        for (var d = 0; d < data.length; d++) {
+          dataArray.push(parseFloat(data[d].number))
+        }
+        var minVal = d3.min(dataArray)
+        var maxVal = d3.max(dataArray)
+        var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
+
 
       d3.json('UHF42.json', function(error, json) {
 
@@ -95,7 +101,7 @@
                         
                         if (value) {
                           //If value exists…
-                          return color(value);
+                          return ramp(d.properties.value);
                         } else {
                           //If value is undefined…
                           return "#ccc";
