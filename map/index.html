@@ -66,10 +66,12 @@
                     })
             .entries(data)
         console.log(dataNest[0].value.year)
+
         // Create 1st dropdown
         var topicMenu = d3.select("#topicDropdown")
         topicMenu
         .append("select")
+        .attr("id","topicDropdownButton")
         .selectAll("option")
             .data(dataNest)
             .enter()
@@ -85,6 +87,7 @@
           yearMenu
             .data(dataNest)
           .append("select")
+          .attr("id","yearDropdownButton")
           .selectAll("option")
               .data(function(d) { return d.value.year; })
               .enter()
@@ -96,9 +99,18 @@
                   return d.key;
               })
 
+        var current_year = d3.select("#yearDropdownButton").node().value;
+        var current_topic = d3.select("#topicDropdownButton").node().value;
+
+        console.log(current_topic)
+
+        var dataNew = data.filter(function(d) {return d.topic == current_topic && d.year == current_year})
+        console.log(dataNew)
+
+
         var dataArray = [];
-        for (var d = 0; d < data.length; d++) {
-          dataArray.push(parseFloat(data[d].number))
+        for (var d = 0; d < dataNew.length; d++) {
+          dataArray.push(parseFloat(dataNew[d].number))
         }
         var minVal = d3.min(dataArray)
         var maxVal = d3.max(dataArray)
@@ -106,18 +118,22 @@
 
         console.log(dataArray)
 
+      // function that runs when yearManu changes
+      // grab the value from yearmenu and console log it
+
+
       d3.json('UHF42.json', function(error, json) {
           console.log(json)
           //Merge the csv data and GeoJSON
           //Loop through once for each csv data value
           //if (error) throw error;
-          for (var i = 0; i < data.length; i++) {
+          for (var i = 0; i < dataNew.length; i++) {
         
             //Grab geo entity id from data csv
-            var dataGeo = data[i].id;
+            var dataGeo = dataNew[i].id;
             
             //Grab data value, and convert from string to float
-            var dataValue = parseFloat(data[i].number);
+            var dataValue = parseFloat(dataNew[i].number);
             //Find the corresponding geo inside the GeoJSON
             for (var j = 0; j < json.features.length; j++) {
             
