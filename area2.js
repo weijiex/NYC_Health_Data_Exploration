@@ -3,6 +3,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+
 // set the ranges
 var x = d3.scalePoint().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
@@ -15,7 +16,7 @@ var valueline = d3.line()
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-var svg = d3.select("body").append("svg")
+var svg2 = d3.select("#area2").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -55,7 +56,7 @@ d3.csv("data.csv", function(error, data) {
   console.log(data)
 
   // Add the X Axis
-  svg.append("g")
+  svg2.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
 
@@ -101,7 +102,7 @@ d3.csv("data.csv", function(error, data) {
                 return d.key == topic;
               })
 
-    var selectTopicGroups = svg.selectAll(".topicGroups")
+    var selectTopicGroups = svg2.selectAll(".topicGroups")
         .data(selectTopic, function(d){
           return d ? d.key : this.key;
         })
@@ -124,12 +125,12 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "line")
 
     // Add the Y Axis
-    var yaxis = svg.append("g")
-           .attr("class", "y axis")
+    var yaxis2 = svg2.append("g")
+           .attr("class", "y axis2")
            .call(d3.axisLeft(y));
 
     // Add a label to the y axis
-    svg.append("text")
+    svg2.append("text")
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - 45) //adjust distance from y-axis
           .attr("x", 0 - (height / 2))
@@ -153,7 +154,7 @@ d3.csv("data.csv", function(error, data) {
               })
 
     // Select all of the grouped elements and update the data
-      var selectTopicGroups = svg.selectAll(".topicGroups")
+      var selectTopicGroups = svg2.selectAll(".topicGroups")
         .data(selectTopic)
         .each(function(d){
                 y.domain([0, d.value.max])
@@ -200,7 +201,7 @@ d3.csv("data.csv", function(error, data) {
       .property("value")
 
     // Change the class of the matching line to "selected"
-    var selLine = svg.selectAll(".line")
+    var selLine = svg2.selectAll(".line")
             // de-select all the lines
             .classed("selected", false)
             .filter(function(d) {

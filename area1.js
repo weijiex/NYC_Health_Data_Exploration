@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>NYC Health Data Exploration</title>
-        <script src="https://d3js.org/d3.v4.js"></script>
-        <script src="d3-tip.js"></script>
-        <link rel="stylesheet" href="style.css">
-    </head>
-  
-  <body>
-
-    <div id = "topicDropdown"></div>
-    <div id= "yearDropdown"></div>
-    
-    <script>
-    var format = d3.format(",");
+var format = d3.format(",");
 
     // Set tooltips
     var tip = d3.tip()
@@ -25,11 +9,11 @@
             })
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
+        width = 760 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
     var lowColor = '#f9f9f9'
     var highColor = '#bc2a66'
-    var svg = d3.select("body").append("svg")
+    var svg1 = d3.select("#area1").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -42,16 +26,6 @@
             d.number = +d.number;
             d.year = d.year;
         });
-        /*
-        var dataNest = d3.nest()
-            .key(function(d){
-              return d.topic;
-            })
-            .key(function(d){
-              return d.year;
-            })
-          .entries(data)*/
-        //console.log(dataNest[0].values[0].values[0].number)
         
         var dataNest = d3.nest()
               .key(function(d){
@@ -68,7 +42,7 @@
         console.log(dataNest[0].value.year)
 
         // Create 1st dropdown
-        var topicMenu = d3.select("#topicDropdown")
+        var topicMenu = d3.select("#maptopicDropdown")
         topicMenu
         .append("select")
         .attr("id","topicDropdownButton")
@@ -83,7 +57,7 @@
                 return d.key;
             })
         // Create 2nd dropdown
-          var yearMenu = d3.select("#yearDropdown")
+          var yearMenu = d3.select("#mapyearDropdown")
           yearMenu
             .data(dataNest)
           .append("select")
@@ -99,8 +73,31 @@
                   return d.key;
               })
 
-        var current_year = d3.select("#yearDropdownButton").node().value;
-        var current_topic = d3.select("#topicDropdownButton").node().value;
+
+        //var current_year = d3.select("#yearDropdownButton").node().value;
+        //var current_topic = d3.select("#topicDropdownButton").node().value;
+
+        map_function('2008', 'Cigarette Smoking among Adults')
+        current_topic = 'Cigarette Smoking among Adults'
+
+
+        d3.select("#yearDropdownButton").on("change", function(){
+          current_year = d3.select("#yearDropdownButton").node().value;
+          console.log(current_year);
+
+
+         /* d3.select("#topicDropdownButton").on("change", function(){
+            current_topic = d3.select("#topicDropdownButton").node().value;
+            })
+            console.log(current_topic);*/
+
+          map_function(current_year, current_topic)
+
+        })
+
+function map_function(current_year, current_topic) {
+
+        d3.select("#legend").remove();
 
         console.log(current_topic)
 
@@ -157,9 +154,9 @@
             .rotate([96, -39])
             .fitSize([width, height], json)); 
          
-            svg.call(tip);
+            svg1.call(tip);
 
-            var g = svg.append("g");
+            var g = svg1.append("g");
             g.append('g')
                 .selectAll('path')
                 .data(json.features)
@@ -199,12 +196,13 @@
         });
 
             // add a legend
-            var w = 140, h = 300;
+            var w = 70, h = 200;
 
-            var key = d3.select("body")
+            var key = d3.select("#area1")
               .append("svg")
+              .attr("id","legend")
               .attr("width", w)
-              .attr("height", h)
+              .attr("height", h + 15)
               .attr("class", "legend");
 
             var legend = key.append("defs")
@@ -227,39 +225,21 @@
               .attr("stop-opacity", 1);
 
             key.append("rect")
-              .attr("width", w - 100)
+              .attr("width", w - 50)
               .attr("height", h)
               .style("fill", "url(#gradient)")
               .attr("transform", "translate(0,10)");
 
-            var y = d3.scaleLinear()
+            var y1 = d3.scaleLinear()
               .range([h, 0])
               .domain([minVal, maxVal]);
 
-            var yAxis = d3.axisRight(y);
+            var yAxis1 = d3.axisRight(y1);
 
             key.append("g")
-              .attr("class", "y axis")
-              .attr("transform", "translate(41,10)")
-              .call(yAxis)
+              .attr("class", "y axis1")
+              .attr("transform", "translate(25, 10)")
+              .call(yAxis1)
         });
+    }
     })
-    </script>
-  </body>
-  
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

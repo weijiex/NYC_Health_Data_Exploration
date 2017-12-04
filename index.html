@@ -3,15 +3,32 @@
     <head>
         <meta charset="utf-8">
         <title>NYC Health Data Exploration</title>
-        <script type="text/javascript" src="./d3/d3.min.js""></script>
         <link rel="stylesheet" href="style.css">
     </head>
   
   <body>
-    <div id = "topicDropdown"></div>
-    <div id= "geoDropdown"></div>
-    <div id="graph"></div>
-    <script src="script.js"></script>
+
+    <div class="container">
+            <h2> NYC Health Data Distribution</h2>
+            <div id="area1"> <!-- barchart container -->
+                <div id = "maptopicDropdown"></div>
+                <div id= "mapyearDropdown"></div>
+            </div>
+            <div id="area2"> <!-- barchart2 container -->
+                <div id = "topicDropdown"></div>
+                <div id= "geoDropdown"></div>
+            </div>
+        </div> 
+        <div id="footer">
+            <strong>Source</strong> : NYC Environment and Health Data Portal
+        </div>
+
+    <script type="text/javascript" src="./d3/d3.min.js""></script>
+    <script src="d3-tip.js"></script>
+
+    <script src="area1.js"></script>
+    <script src="area2.js"></script>
+
   </body>
   
 </html>
