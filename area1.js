@@ -20,7 +20,7 @@ var format = d3.format(",");
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")"); 
 
-    d3.csv("map_data_sample.csv", function(data) {
+    d3.csv("data.csv", function(data) {
         data.forEach(function(d) {
             d.id = +d.id;
             d.number = +d.number;
