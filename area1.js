@@ -39,7 +39,7 @@ var format = d3.format(",");
                     return {year: year};
                     })
             .entries(data)
-        console.log(dataNest[0].value.year)
+        //console.log(dataNest[0].value.year)
 
         // Create 1st dropdown
         var topicMenu = d3.select("#maptopicDropdown")
@@ -74,35 +74,31 @@ var format = d3.format(",");
               })
 
 
-        //var current_year = d3.select("#yearDropdownButton").node().value;
-        //var current_topic = d3.select("#topicDropdownButton").node().value;
-
+        
         map_function('2008', 'Cigarette Smoking among Adults')
-        current_topic = 'Cigarette Smoking among Adults'
 
+        //current_topic = 'Cigarette Smoking among Adults'
 
-        d3.select("#yearDropdownButton").on("change", function(){
-          current_year = d3.select("#yearDropdownButton").node().value;
-          console.log(current_year);
-
-
-         /* d3.select("#topicDropdownButton").on("change", function(){
+        d3.select("#update").on("click", function(){
+         
+            current_year = d3.select("#yearDropdownButton").node().value;         
             current_topic = d3.select("#topicDropdownButton").node().value;
-            })
-            console.log(current_topic);*/
-
+                                
           map_function(current_year, current_topic)
-
         })
+        
+
 
 function map_function(current_year, current_topic) {
 
         d3.select("#legend").remove();
 
         console.log(current_topic)
+        console.log(current_year)
+
 
         var dataNew = data.filter(function(d) {return d.topic == current_topic && d.year == current_year})
-        console.log(dataNew)
+        //console.log(dataNew)
 
 
         var dataArray = [];
@@ -113,14 +109,14 @@ function map_function(current_year, current_topic) {
         var maxVal = d3.max(dataArray)
         var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
 
-        console.log(dataArray)
+        //console.log(dataArray)
 
       // function that runs when yearManu changes
       // grab the value from yearmenu and console log it
 
 
       d3.json('UHF42.json', function(error, json) {
-          console.log(json)
+          //console.log(json)
           //Merge the csv data and GeoJSON
           //Loop through once for each csv data value
           //if (error) throw error;
@@ -240,6 +236,9 @@ function map_function(current_year, current_topic) {
               .attr("class", "y axis1")
               .attr("transform", "translate(25, 10)")
               .call(yAxis1)
-        });
-    }
-    })
+        }); //UHF42
+    } //map function
+    }) //data csv
+
+
+

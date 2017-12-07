@@ -53,7 +53,7 @@ d3.csv("data.csv", function(error, data) {
             })
     .entries(data)
 
-  console.log(data)
+  //console.log(data)
 
   // Add the X Axis
   svg2.append("g")
