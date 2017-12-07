@@ -125,8 +125,8 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "line")
 
     // Add the Y Axis
-    var yaxis2 = svg2.append("g")
-           .attr("class", "y axis2")
+    var yaxis = svg2.append("g")
+           .attr("class", "y axis")
            .call(d3.axisLeft(y));
 
     // Add a label to the y axis
@@ -213,3 +213,4 @@ d3.csv("data.csv", function(error, data) {
   })
     
 });
+

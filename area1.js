@@ -226,6 +226,7 @@ function map_function(current_year, current_topic) {
               .style("fill", "url(#gradient)")
               .attr("transform", "translate(0,10)");
 
+            
             var y1 = d3.scaleLinear()
               .range([h, 0])
               .domain([minVal, maxVal]);
@@ -233,9 +234,9 @@ function map_function(current_year, current_topic) {
             var yAxis1 = d3.axisRight(y1);
 
             key.append("g")
-              .attr("class", "y axis1")
+              //.attr("class", "y axis1")
               .attr("transform", "translate(25, 10)")
-              .call(yAxis1)
+              .call(yAxis1) 
         }); //UHF42
     } //map function
     }) //data csv
