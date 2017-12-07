@@ -9,7 +9,7 @@ body { font: 12px Arial;}
 
 .selected{
   stroke: #EF5285;
-
+}
 
 /* Tooltip CSS */
     .d3-tip {

@@ -171,6 +171,9 @@ function map_function(current_year, current_topic) {
                           return "#ccc";
                         }
              })
+              .style('stroke', 'white')
+              .style('stroke-width', 1.5)
+              .style("opacity",0.8)
               // tooltips
               .style("stroke","white")
               .style('stroke-width', 0.3)
