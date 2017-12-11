@@ -7,26 +7,30 @@
     </head>
   
   <body>
+  <div class="backgroud">
 
-    <div class="container">
             <h2> NYC Health Data Distribution</h2>
+		    <h3>There are two ways for you to examine the NYC health data on the neighbothood level.  
+		    </br>After choosing the topic and the year you are interested in, by clicking update, a colored map will show the data distribution.
+		    </br>The trend of the data can be examined from the line chart. The first dropdown box is for the topic chosen and the second dropdown box is for the specific neighborhood check.
+		    </h3>
             <button type='button' id='update'> update</button>
-            <div id="area1"> <!-- -->
+            <div id="area1"> 
                 <div id = "maptopicDropdown"></div>
                 <div id= "mapyearDropdown"></div>               
             </div>
-            <div id="area2"> <!-- -->
+            <div id="area2"> 
                 <div id = "topicDropdown"></div>
                 <div id= "geoDropdown"></div>
             </div>
-        </div> 
-        <div id="footer">
-            <strong>Source</strong> : NYC Environment and Health Data Portal
-        </div>
+            <div id="footer">
+            <strong>Data Source: </strong> <a href="http://a816-dohbesp.nyc.gov/IndicatorPublic/BuildATable.aspx">NYC Environment and Health Data Portal</a>
+        	</div>
 
+   </div>   
+     
     <script type="text/javascript" src="./d3/d3.min.js""></script>
     <script src="d3-tip.js"></script>
-
     <script src="area1.js"></script>
     <script src="area2.js"></script>
 

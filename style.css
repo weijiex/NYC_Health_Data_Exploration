@@ -1,26 +1,45 @@
+.backgroud { 
+    background-color: #f7fbff;
+}
 
-body { font: 12px Arial;}
+body { 
+  font: 12px Arial;
+  color: black;
+}
+
+h2 {
+  text-align: center;
+  padding: 10px 10px;
+  margin: 0 auto;
+}
+
+h3 {
+  text-align: center;
+  margin: 0 auto;
+}
 
 .line {
   fill: none;
-  stroke: #999999;
-  stroke-width: 2px;
+  stroke: #252525;
+  stroke-width: 1px;
 }
 
 .selected{
   stroke: #EF5285;
+  stroke-width: 4px;
 }
 
 /* Tooltip CSS */
+/* reference: http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f */
     .d3-tip {
-    line-height: 1.5;
-    font-weight: 400;
-    font-family:"avenir next", Arial, sans-serif;
-    padding: 6px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #FFA500;
-    border-radius: 1px;
-    pointer-events: none;
+      line-height: 1.5;
+      font-weight: 400;
+      font-family:"avenir next", Arial, sans-serif;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border-radius: 1px;
+      pointer-events: none;
     }
 
     /* Creates a small triangle extender for the tooltip */
