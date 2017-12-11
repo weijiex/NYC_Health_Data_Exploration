@@ -1,0 +1,258 @@
+---
+title: "Final Portfolio - Static Part"
+author: "Weijie Jaycee Xin"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '/Users/admin/Desktop/DataViz')
+```
+
+## Background
+The project aims to examine the health situation in New York City, mainly focusing on the health outcome data distribution and the relationship between certain social determinants and the health outcomes. With the detailed examination and insightful findings, it would benefit the implementation of the related health policies and the community health programs.
+
+```{r}
+library(extrafont)
+library(ggplot2)
+library(readxl)
+library(ggmap)
+setwd('/Users/admin/Desktop/DataViz')
+```
+
+## Theming
+
+```{r}
+the_theme <- theme(plot.title = element_text(face="bold", size=15, family='Verdana'),
+                   plot.subtitle = element_text(size=10, margin=margin(b=10)),
+                   plot.caption = element_text(size=8, margin=margin(t=10)),
+                   plot.background = element_rect(fill="#f0f0f0"),
+                   
+                   axis.title = element_text(size=10),
+                   axis.title.x = element_text(margin=margin(t=10)),
+                   axis.title.y = element_text(margin=margin(r=10)),
+                   axis.text = element_text(size=8),
+                   axis.text.x = element_text(margin=margin(t=3)),
+                   
+                   plot.margin=unit(c(1,1,1,1),"cm"),
+                   
+                   panel.background = element_rect(fill = "white"),
+                   panel.grid.major=element_line(color='black', size=0.25),
+                   panel.grid.minor=element_line(color="black", linetype = "dotted", size=0.15),
+                   panel.border = element_rect(color="white",fill=NA),
+                   
+                   
+                   legend.box.background = element_rect(color="black"),
+                   legend.key = element_blank(),
+                   legend.title = element_text(family="Verdana", size=10),
+                   legend.text = element_text(family="Verdana", size=9),
+                   legend.position = "bottom",
+                   
+                   strip.text = element_text(color="black", size=9, family="Verdana"),
+                   strip.background = element_rect(fill="#9ecae1"),
+                   
+                   axis.ticks=element_blank())
+default_color_palette <- 'Set2'
+default_discrete_color = c('#F08080', '#ADD8E6', '#FFFACD', '#90EE90', '#E6E6FA')
+default_continuous_color = c('#DB7093', '#DDA0DD', '#FFC0CB', '#FFE4E1', '#FFF0F5')
+```
+
+## Plot 1 
+
+```{r fig.width=9, fig.height=7}
+g1 <- read_excel('G2.xlsx')
+
+ggplot(data=g1, aes(x=no_hs_tract, y=health_insurance_uninsured_tract, color=GEO)) + 
+  scale_colour_brewer(palette = default_color_palette) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method='lm', se=FALSE)+
+  scale_x_continuous(breaks=c(10, 20, 30, 40, 50, 60),
+                     labels=c("10%","20%", "30%", "40%", "50%","60%")) +
+  scale_y_continuous(breaks=c(0, 10, 20, 30, 40),
+                     labels=c('0%', "10%", "20%", "30%", "40%")) +
+  
+  labs(y = "No Health Insurance Rate (% of total population)", x = "High School Drop-out Rate (% of adults 25+)", 
+       title="Health Insurance and Education Level",
+       subtitle="Examining the relationship between a lack of health insurance(2010-2014) and high school dropout(2011-2015) \non NYC census tract level",
+       caption="Data Source: DATA2GO.NYC") +
+       the_theme +
+       guides(color=guide_legend("Borough"))
+```
+
+**Summary**
+The graph is designed to examine the correlation between the social determinant variable *High School Drop-out Rate(2010-2014)* and the health outcome variable *No Health Insurance Rate(2011-2015)*. The data are collected on the census tract level of NYC, with over 2,000 data points. From the graph we can see, there is a positive relationship between the two variables among all five boroughs. Bronx, Brooklyn, Manhattan and Staten Island have similar slope rates, while Queens has a much steeper one.
+
+
+## Plot 2
+
+```{r fig.width=9, fig.height=7}
+g2 <- read_excel('G1.xlsx')
+
+ggplot(data=g2, aes(x=Borough, y = alzheimers_deaths_cd, size=No_Exercise_Rate)) + 
+  geom_point(alpha=0.5, color='darkgoldenrod1') +
+  scale_y_continuous(breaks=c(0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5),
+                     labels=c('0', "2.5", "5", "7.5", "10", '12.5', '15', '17.5')) +
+  
+  labs(y = "Alzheimer's Disease Deaths (per 100,000 residents)", x = "Boroughs", 
+       title="Alzheimer's Deaths and No Exercise Rate",
+       subtitle="Examining the trend between Alzheimer's deaths rate(2009-2013) and \npercentage of adults 18+ who did not exercise at all in the past 30 days(2011-2013) on NYC community district level",
+       caption="Data Source: DATA2GO.NYC") +
+       the_theme +
+       guides(size=guide_legend("No Exercise Rate"))
+```
+
+**Summary**
+The graph is designed to examine the relationship between the social determinant variable *No Exercise Rate(2011-2013)*, which is percentage of adults 18+ who did not exercise at all in the past 30 days,  and the health outcome variable *Alzheimer's Deaths per 100,000 residents(2009-2013)*. The data are collected on the community district level of NYC, with 59 data points. From the graph we can see, generally, there is no strong relationship between the two variables among all five boroughs. In Bronx, Queens and Staten Island, *No Exercise Rate* barely changes with the increase of *Alzheimer's Deaths*. In Brooklyn, there is a weak negative relationship between the two variables, while in Manhattan, there is a weak positive relationship, which is the relationship people may presume.
+
+
+## Plot 3
+
+```{r fig.width=9, fig.height=7}
+g3 <- read_excel('G4.xlsx')
+
+ggplot(g3, aes(x=homeless_children_rate_cd, y=infant_mortality_cd)) + 
+  geom_point(size=0.8, alpha=0.5, aes(color=Borough)) + 
+  geom_line(size=0.7, alpha=0.8, aes(color=Borough)) +
+  scale_colour_brewer(palette = "Set2") + 
+  geom_smooth(method = 'loess', se=FALSE, color='black') +
+  scale_x_continuous(breaks=c(0, 5, 10, 15, 20, 25, 30, 35),
+                     labels=c('0', "5","10", "15", "20", "25","30",'35')) +
+  scale_y_continuous(breaks=c(1.5, 3, 4.5, 6, 7.5, 9),
+                     labels=c("1.5", "3", "4.5", "6", "7.5", '9')) +
+  
+  labs(y = "Infant Mortality (death before first birthday per 1,000 live births)", x = "Homeless Children (per 1,000 children ages 0-17)", 
+       title="Infant Mortality V.S Homeless Children",
+       subtitle="Examining the relationship between infant mortality(2011-2013) and homeless children rate(2015) \non NYC community district level",
+       caption="Data Source: DATA2GO.NYC") +
+       the_theme
+```
+
+**Summary**
+The graph is designed to examine the relationship between the social determinant variable *Homeless Children(2015)* and the health outcome variable *Infant Mortality(2011-2013)*. The data are collected on the community district level of NYC, with 59 data points. From the graph we can see, there is a positive relationship between the two variables among all five boroughs. Bronx and Brooklyn have clearer and stronger trends compared to the other three boroughs.
+
+
+## Plot 4
+
+```{r fig.width=9, fig.height=10}
+g4 <- read_excel('G1.xlsx')
+
+ggplot(data=g4, aes(x=diabetes, y = reorder(GEO_DISPLAY_NAME, diabetes), color=Borough)) + 
+  scale_colour_brewer(palette = "Set2") +
+  geom_segment(aes(yend=GEO_DISPLAY_NAME,xend=0),size=1) + 
+  geom_point(size=1.5) +
+  facet_grid(Borough ~ ., scales="free_y", space="free_y") +
+  scale_x_continuous(breaks=c(0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5),
+                     labels=c('0%', "2.5%", "5%", "7.5%", "10%", '12.5%', '15%', '17.5%')) +
+  
+  labs(y = "Community District", x = "Diabetes Diagnosis Rate (% of adults 18+)", 
+       title="Diabetes Diagnosis Rate Description",
+       subtitle="Describing diabetes diagnosis rate(2011-2013) on NYC community district level",
+       caption="Data Source: DATA2GO.NYC") +
+       the_theme +
+       theme(axis.text.x = element_text(angle=90, hjust=1, margin=margin(t=-1), size=8),
+             strip.text.y = element_text(angle=0, margin=margin(l=0)))
+```
+
+**Summary**
+The graph is designed to examine the distribution of *Diabetes Diagnosis Rate(2011-2013)*, which is the percentage of adults 18+ who have ever been told they have diabetes. The data are collected on the community district level of NYC, with 59 data points. From the graph we can see, Bronx, Brooklyn, Queens and Staten Island have similar distributions, while Manhattan has an overall lower rate distribution.
+
+
+## Plot 5
+
+```{r fig.width=9, fig.height=7}
+g5 <- read_excel('G4.xlsx')
+
+ggplot(data=g5, aes(x=cancer_deaths_cd, fill=Borough)) + 
+  scale_colour_brewer(palette = "Set2") +
+  geom_density(alpha=0.4) +
+  scale_x_continuous(breaks=c(100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200),
+                     labels=c('100', '110', "120", "130", "140", "150", '160', '170', '180', '190', '200')) +
+  
+  labs(y = "Density", x = "Cancer Deaths (per 100,000 residents)", 
+       title="Cancer Deaths Rate Distribution",
+       subtitle="Describing cancer deaths rate(2009-2013) on NYC community district level",
+       caption="Data Source: DATA2GO.NYC") +
+       the_theme
+```
+
+**Summary**
+The graph is designed to examine the distribution of *Cancer Deaths Rate(2009-2013)*. Note that the death rate for malignant neoplasms (cancers) is adjusted to account for variations in the age structure of the populations. The data are collected on the community district level of NYC, with 59 data points. From the graph we can see, Bronx, Brooklyn and Manhattan have similar bell-shaped distributions, while Queens is right-skewed, and Staten Island has two peaks.
+
+
+## Plot 6
+
+```{r fig.width=9, fig.height=7}
+g6 <- read_excel('G6.xlsx')
+
+ggplot(g6, aes(x=Year, y=Percent, group=interaction(Borough, Indicator), colour=Borough)) +
+  geom_point(size=0.8, alpha=0.5) +
+  geom_line(size=0.7, aes(linetype=Indicator)) + 
+  scale_colour_brewer(palette = "Set2") + 
+  scale_x_continuous(breaks=seq(2003, 2015),
+                     labels=seq(2003, 2015)) +
+  
+  labs(y = "Percentage(%)", x = "Year", 
+       title="Trends in Obese Adults and Youth",
+       subtitle="Describing the trends of obese adults and youth(2003-2015) on NYC borough level",
+       caption="Data Source: NYC Environment & Health Data Portal") +
+       the_theme +
+       theme(legend.title = element_text(family="Verdana", size=8),
+             legend.text = element_text(family="Verdana", size=7.5))
+```
+
+**Summary**
+The graph is designed to examine the trends in obesisity rate for both adults and the youth from 2003 to 2015. The data are collected on the borough level of NYC. From the graph we can see, the obesity rate for adults is higher than that for the youth in all five boroughs. For adults obesity rate, Manhattan is the lowest one. The general trends for both adults and the youth is slightly rising from 2003 to 2015.
+
+
+## Plot 7
+
+```{r fig.width=9, fig.height=7}
+g7 <- read_excel('G7.xlsx')
+
+ggplot(g7, aes(x=Year, y=AdjRate2, fill=Borough)) +
+  scale_fill_brewer(palette = "Set2") + 
+  geom_area(position = "stack", alpha=0.7) + 
+  scale_x_continuous(breaks=seq(2001, 2013),
+                     labels=seq(2001, 2013)) +
+  labs(y = "Heart Attack Hospitalizations Rate (per 10,000 residents)", x = "Year", 
+       title="Trends in Heart Attack Hospitalizations Rate",
+       subtitle="Describing the trends in heart attack hospitalizations(2001-2013) for adults 65 years and older \non NYC borough level",
+       caption="Data Source: NYC Environment & Health Data Portal") +
+  the_theme
+```
+
+**Summary**
+The graph is designed to examine the trends in heart attack hospitalizations rate for adults 65 years and older from 2001 to 2013. The data are collected on the borough level of NYC. From the graph we can see, the trends are decreasing for all the five boroughs. Manhattan has the loweset rate compared to the other four boroughs through the period.
+
+
+## Plot 8
+```{r fig.width=10, fig.height=10}
+newyorkcity <- get_map(location = 'New York City', maptype="terrain", source='google')
+hospitals <- read_excel("hospitalsnew.xlsx")
+
+min_lat <- 40.57
+max_lat <- 40.92
+min_long <- -74.18
+max_long <- -73.70
+
+ggmap(newyorkcity) +
+  geom_point(data = hospitals, aes(x = Longitude, y = Latitude, color=type), alpha=0.6, size=5) +
+  scale_colour_brewer(palette = "Set1") +
+  scale_x_continuous(limits=c(min_long, max_long)) +
+  scale_y_continuous(limits=c(min_lat, max_lat)) +
+  labs(title="NYC's Public Hospital System",
+       subtitle="Examing the distribution of NYC Health and Hospitals Corporation(HHC),Public Health System, which consists of 11 acute care\nhospitals, skilled nursing facilities, 6 large diagnostic and treatment centers and community-based clinics",
+       caption="Data Source: Health and Hospitals Corporation (HHC) Facilities, NYC Open Data") +
+  the_theme +
+  theme(axis.title.x = element_blank(), 
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank())
+```
+
+
+
+
+
